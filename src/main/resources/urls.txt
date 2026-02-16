@@ -1,0 +1,3 @@
+# Example URL input file for WebLinkExtractor
+https://google.com
+https://www.wikipedia.org
