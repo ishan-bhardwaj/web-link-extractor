@@ -2,6 +2,18 @@
 
 This project is production-leaning and intentionally simple, but it can be improved further in several areas.
 
+## Intentional Design Choice: Custom Queue
+
+The lock-free bounded queue in this project was implemented intentionally.
+
+Reasons:
+
+- The assignment explicitly emphasized queue behavior and concurrency.
+- Building a queue in-project demonstrates algorithmic reasoning, CAS-based state management, and shutdown semantics.
+- It keeps the core pipeline dependency-light and easy to inspect end to end.
+
+For many real production systems, using a battle-tested queue implementation (like Chronicle Queue, or even Kafka) is still the better default.
+
 ## 1. Stronger HTML Parsing
 
 Current state:
@@ -23,6 +35,7 @@ Benefits:
 Current state:
 
 - Bounded queue uses drop-oldest on overflow.
+- Queue is custom in-project implementation.
 
 Potential improvement:
 
@@ -37,7 +50,29 @@ Benefits:
 
 - Better control over data-loss behavior per workload.
 
-## 3. Producer/Consumer Metrics and Tracing
+## 3. Alternative Queue Implementations (Production Option)
+
+If requirements move beyond this exercise-oriented implementation, consider replacing the custom queue with a specialized library.
+
+Examples:
+
+- Chronicle Queue
+  - strong option when you need persisted/off-heap queues and replayability.
+- JCTools MPSC/MPMC queues
+  - high-throughput in-memory lock-free queues.
+- LMAX Disruptor
+  - very low-latency event processing patterns.
+- Akka Streams / fs2 queues
+  - higher-level backpressure and stream semantics.
+
+Selection criteria:
+
+- in-memory vs durable queue requirements
+- single-node vs distributed architecture
+- latency/throughput targets
+- operational complexity and observability needs
+
+## 4. Producer/Consumer Metrics and Tracing
 
 Current state:
 
@@ -57,7 +92,7 @@ Benefits:
 
 - Faster production diagnosis and capacity planning.
 
-## 4. Retry and Circuit-Breaking for HTTP
+## 5. Retry and Circuit-Breaking for HTTP
 
 Current state:
 
@@ -72,7 +107,7 @@ Benefits:
 
 - Better resilience under transient network/service failures.
 
-## 5. Output Targets Beyond Console
+## 6. Output Targets Beyond Console
 
 Current state:
 
@@ -91,7 +126,7 @@ Benefits:
 
 - Easier integration into downstream systems.
 
-## 6. Graceful Stop and Lifecycle Hooks
+## 7. Graceful Stop and Lifecycle Hooks
 
 Current state:
 
@@ -109,7 +144,7 @@ Benefits:
 
 - Cleaner controlled shutdown in managed environments.
 
-## 7. Scale-Oriented Source Strategy
+## 8. Scale-Oriented Source Strategy
 
 Current state:
 
@@ -124,7 +159,7 @@ Benefits:
 
 - Better throughput for huge URL lists.
 
-## 8. Configuration Hardening
+## 9. Configuration Hardening
 
 Current state:
 
@@ -139,7 +174,7 @@ Benefits:
 
 - Faster failure detection and safer deployments.
 
-## 9. More Deterministic Concurrency Tests
+## 10. More Deterministic Concurrency Tests
 
 Current state:
 
@@ -155,7 +190,7 @@ Benefits:
 
 - Higher confidence in lock-free correctness under stress.
 
-## 10. Packaging and Delivery
+## 11. Packaging and Delivery
 
 Current state:
 
@@ -172,4 +207,3 @@ Potential improvement:
 Benefits:
 
 - Easier distribution and operational adoption.
-
